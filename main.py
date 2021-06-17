@@ -3,11 +3,20 @@ import sympy
 
 
 def main():
-    p = int(input('p :'))
-    q = int(input('q :'))
-    n, e = make_public_key(p, q)
+    n = int(input('long :'))
+    p1, p2 = make_prime(n)
+    n, e = make_public_key(p1, p2)
+    print('PUBLIC KEY:')
     print('n :', n)
     print('e :', e)
+
+
+def make_prime(n):
+    p1 = sympy.randprime(pow(10, n-1), pow(10, n))
+    p2 = sympy.randprime(pow(10, n-1), pow(10, n))
+    if p1 == p2:
+        make_prime(n)
+    return p1, p2
 
 
 def make_public_key(p, q):
