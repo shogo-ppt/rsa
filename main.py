@@ -49,7 +49,7 @@ def generate_key(p, q):
         a = sympy.gcd(e, lcm)
     d, y, t = sympy.gcdex(e, lcm)
     d = d % lcm
-    return (e, n), (d, n)
+    return (e, n), (int(d), n)
 
 
 def encrypt(p_text, public_key):
@@ -59,20 +59,16 @@ def encrypt(p_text, public_key):
     l_list = len(p_int_list)
     for i in range(l_list):  # N進数 -> 10進数
         p_int += p_int_list[i - l_list] * pow(95, i)
-    c = 0
-    c += pow(p_int, e, n)
-    print()  # この位置にprintが無いとなぜか動かないんだ。
+    c = pow(p_int, e, n)
 
-    element = ''
     enc_int = []
     while c > 0:
         element = str(c % 96)
         enc_int.append(int(element))
-        c = int(c // n)
+        c = c // 96
     enc_int.reverse()
 
     enc_text = ''.join(chr(i+32) for i in enc_int)
-    # enc_text = enc_text.encode('utf-8', 'replace').decode('utf-8')
     return enc_int, enc_text
 
 
