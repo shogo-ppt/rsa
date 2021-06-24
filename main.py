@@ -3,12 +3,32 @@ import sympy
 
 
 def main():
-    n = int(input('long :'))
+    # n = int(input('long :'))
+    n = 200  # 桁数
+    # n = 5
     p1, p2 = make_prime(n)
-    n, e = make_public_key(p1, p2)
-    print('PUBLIC KEY:')
-    print('n :', n)
-    print('e :', e)
+    public_key, secret_key = generate_key(p1, p2)
+    e, n = public_key
+    d, n = secret_key
+    print(f'''
+PUBLIC KEY:
+e : {e}
+n : {n}
+
+SECRET KEY:
+d : {d}
+    ''')
+    
+    p_text = input('Input plain text :')
+    e_int, e_text = encrypt(p_text, public_key)
+    print('Encrypted int : ', e_int)
+    print('Encrypted text: ', e_text)
+
+    # dec_int, dec_text = decrypt(e_text, secret_key)
+    dec_int = decrypt(e_text, secret_key)
+    print('decrypt int : ', dec_int)
+    # dec_text = decrypt(e_text, secret_key)
+    # print('decrypt text: ', dec_text)
 
 
 def make_prime(n):
@@ -19,16 +39,54 @@ def make_prime(n):
     return p1, p2
 
 
-def make_public_key(p, q):
+def generate_key(p, q):
     n = p * q
-    max_pq = max(p, q)
     lcm = sympy.lcm(p-1, q-1)
-    e = random.randint(max_pq, lcm)
+    e = random.randint(max(p, q), lcm)
     a = 0
     while a != 1:
         e = e + 1
         a = sympy.gcd(e, lcm)
-    return n, e
+    d, y, t = sympy.gcdex(e, lcm)
+    d = d % lcm
+    return (e, n), (d, n)
+
+
+def encrypt(p_text, public_key):
+    e, n = public_key
+    p_int_list = [(ord(char)-32) for char in p_text]
+    p_int = 0
+    l_list = len(p_int_list)
+    for i in range(l_list):  # N進数 -> 10進数
+        p_int += p_int_list[i - l_list] * pow(95, i)
+    c = pow(p_int, e, n)
+
+    element = ''
+    enc_int = []
+    while c > 0:
+        element = str(c % 96)
+        enc_int.append(int(element))
+        c = int(c // n)
+
+    enc_text = ''.join(chr(i+32) for i in enc_int)
+    # enc_text = enc_text.encode('utf-8', 'replace').decode('utf-8')
+    return enc_int, enc_text
+
+
+def decrypt(enc_text, secret_key):
+    d, n = secret_key
+    enc_int_list = [(ord(char)-32) for char in enc_text]
+    d_int = 0
+    l_list = len(enc_int_list)
+    for i in range(l_list):  # N進数 -> 10進数
+        d_int += enc_int_list[i - l_list] * pow(95, i)
+    c = pow(d_int, d, n)
+
+    # dec_int = [pow(enc_int, d, n) for i in enc_int]
+    # dec_text = ''.join(chr(i) for i in dec_int)
+    # return dec_int, dec_text
+    # return dec_text
+    return enc_int_list
 
 
 if __name__ == '__main__':
