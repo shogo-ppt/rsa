@@ -59,7 +59,9 @@ def encrypt(p_text, public_key):
     l_list = len(p_int_list)
     for i in range(l_list):  # N進数 -> 10進数
         p_int += p_int_list[i - l_list] * pow(95, i)
-    c = pow(p_int, e, n)
+    c = 0
+    c += pow(p_int, e, n)
+    print()  # この位置にprintが無いとなぜか動かないんだ。
 
     element = ''
     enc_int = []
@@ -67,6 +69,7 @@ def encrypt(p_text, public_key):
         element = str(c % 96)
         enc_int.append(int(element))
         c = int(c // n)
+    enc_int.reverse()
 
     enc_text = ''.join(chr(i+32) for i in enc_int)
     # enc_text = enc_text.encode('utf-8', 'replace').decode('utf-8')
