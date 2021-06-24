@@ -24,11 +24,12 @@ d : {d}
     print('Encrypted int : ', e_int)
     print('Encrypted text: ', e_text)
 
-    # dec_int, dec_text = decrypt(e_text, secret_key)
-    dec_int = decrypt(e_text, secret_key)
+    print()
+    dec_int, dec_text = decrypt(e_text, secret_key)
+    # dec_int = decrypt(e_text, secret_key)
     print('decrypt int : ', dec_int)
     # dec_text = decrypt(e_text, secret_key)
-    # print('decrypt text: ', dec_text)
+    print('decrypt text: ', dec_text)
 
 
 def make_prime(n):
@@ -68,7 +69,7 @@ def encrypt(p_text, public_key):
         c = c // 96
     enc_int.reverse()
 
-    enc_text = ''.join(chr(i+32) for i in enc_int)
+    enc_text = ''.join(chr(i + 32) for i in enc_int)
     return enc_int, enc_text
 
 
@@ -79,13 +80,17 @@ def decrypt(enc_text, secret_key):
     l_list = len(enc_int_list)
     for i in range(l_list):  # N進数 -> 10進数
         d_int += enc_int_list[i - l_list] * pow(95, i)
-    c = pow(d_int, d, n)
+    p = pow(d_int, d, n)
 
-    # dec_int = [pow(enc_int, d, n) for i in enc_int]
-    # dec_text = ''.join(chr(i) for i in dec_int)
-    # return dec_int, dec_text
-    # return dec_text
-    return enc_int_list
+    dec_int = []
+    while p > 0:
+        element = str(p % 96)
+        dec_int.append(int(element))
+        p = p // 96
+    dec_int.reverse()
+
+    dec_text = ''.join(chr(i + 32) for i in dec_int)
+    return dec_int, dec_text
 
 
 if __name__ == '__main__':
