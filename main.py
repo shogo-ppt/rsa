@@ -20,16 +20,19 @@ d : {d}
     ''')
     
     p_text = input('Input plain text :')
-    e_int, e_text = encrypt(p_text, public_key)
-    print('Encrypted int : ', e_int)
-    print('Encrypted text: ', e_text)
+    p_int_list, enc_int, e_text = encrypt(p_text, public_key)
+    print('\n---ENCRYPT---')
+    print(p_int_list)
+    print('\nEncrypted int :', enc_int)
+    print('\nEncrypted text: ', e_text)
 
-    print()
-    dec_int, dec_text = decrypt(e_text, secret_key)
+    enc_int_list, dec_int, dec_text = decrypt(e_text, secret_key)
     # dec_int = decrypt(e_text, secret_key)
-    print('decrypt int : ', dec_int)
+    print('\n---DECRYPT---')
+    print('Encrypted int : ', enc_int_list)
+    print('\ndecrypt int : ', dec_int)
     # dec_text = decrypt(e_text, secret_key)
-    print('decrypt text: ', dec_text)
+    print('\ndecrypt text: ', dec_text)
 
 
 def make_prime(n):
@@ -56,41 +59,44 @@ def generate_key(p, q):
 def encrypt(p_text, public_key):
     e, n = public_key
     p_int_list = [(ord(char)-32) for char in p_text]
-    p_int = 0
-    l_list = len(p_int_list)
-    for i in range(l_list):  # N進数 -> 10進数
-        p_int += p_int_list[i - l_list] * pow(95, i)
+    p_int = n_to_dec(p_int_list)
     c = pow(p_int, e, n)
 
     enc_int = []
-    while c > 0:
+    while c > 0:  # 10進数 -> N進数
         element = str(c % 96)
         enc_int.append(int(element))
         c = c // 96
     enc_int.reverse()
 
     enc_text = ''.join(chr(i + 32) for i in enc_int)
-    return enc_int, enc_text
+    # return enc_int, enc_text
+    return p_int, enc_int, enc_text
 
 
 def decrypt(enc_text, secret_key):
     d, n = secret_key
     enc_int_list = [(ord(char)-32) for char in enc_text]
-    d_int = 0
-    l_list = len(enc_int_list)
-    for i in range(l_list):  # N進数 -> 10進数
-        d_int += enc_int_list[i - l_list] * pow(95, i)
+    d_int = n_to_dec(enc_int_list)
     p = pow(d_int, d, n)
 
     dec_int = []
-    while p > 0:
+    while p > 0:  # 10進数 -> N進数
         element = str(p % 96)
         dec_int.append(int(element))
         p = p // 96
     dec_int.reverse()
 
     dec_text = ''.join(chr(i + 32) for i in dec_int)
-    return dec_int, dec_text
+    return enc_int_list, dec_int, dec_text
+
+
+def n_to_dec(data):  # N進数 -> 10進数
+    dec = 0
+    l_list = len(data)
+    for i in range(1, l_list + 1):
+        dec += data[-i] * pow(95, i - 1)
+    return dec
 
 
 if __name__ == '__main__':
