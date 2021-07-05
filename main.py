@@ -24,15 +24,11 @@ d : {d}
     p_int_list, enc_int, e_text = encrypt(p_text, public_key)
     
     print('\n---ENCRYPT---')
-    # print(p_int_list)
-    # print('\nEncrypted int :', enc_int)
     print('\nEncrypted text:', e_text)
 
     enc_int_list, dec_int, dec_text = decrypt(e_text, secret_key)
 
     print('\n---DECRYPT---')
-    # print('Encrypted int : ', enc_int_list)
-    # print('\ndecrypt int : ', dec_int)
     print('\ndecrypt text:', dec_text)
 
 
