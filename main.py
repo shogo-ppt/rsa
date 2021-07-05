@@ -29,7 +29,7 @@ d : {d}
     enc_int_list, dec_int, dec_text = decrypt(e_text, secret_key)
 
     print('\n---DECRYPT---')
-    print('\ndecrypt text:', dec_text)
+    print('\ndecrypted text:', dec_text)
 
 
 def make_prime(n):
